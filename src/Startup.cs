@@ -100,8 +100,7 @@ namespace Miniblog.Core
             services.AddControllersWithViews();
             services.AddRazorPages();
 
-            services.AddSingleton<IUserServices, BlogUserServices>();
-            services.AddSingleton<IBlogService, FileBlogService>();
+            services.AddSingleton<BlogManager>();
             services.Configure<BlogSettings>(this.Configuration.GetSection("blog"));
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddMetaWeblog<MetaWeblogService>();

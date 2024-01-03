@@ -17,7 +17,7 @@ namespace Miniblog.Core.Services
     using System.Xml.Linq;
     using System.Xml.XPath;
 
-    public class FileBlogService : IBlogService
+    public class BlogManager
     {
         private const string FILES = "files";
 
@@ -33,7 +33,7 @@ namespace Miniblog.Core.Services
                 "Usage",
                 "SecurityIntelliSenseCS:MS Security rules violation",
                 Justification = "Path not derived from user input.")]
-        public FileBlogService(IWebHostEnvironment env, IHttpContextAccessor contextAccessor)
+        public BlogManager(IWebHostEnvironment env, IHttpContextAccessor contextAccessor)
         {
             if (env is null)
             {

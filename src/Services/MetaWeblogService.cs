@@ -1,55 +1,52 @@
 namespace Miniblog.Core.Services
 {
     using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Cryptography.KeyDerivation;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
 
     using System;
     using System.Linq;
     using System.Security.Claims;
+    using System.Text;
     using System.Threading.Tasks;
 
     using WilderMinds.MetaWeblog;
 
     public class MetaWeblogService : IMetaWeblogProvider
     {
-        private readonly IBlogService blog;
+        private readonly BlogManager blog;
 
         private readonly IConfiguration config;
 
         private readonly IHttpContextAccessor context;
-
-        private readonly IUserServices userServices;
-
         public MetaWeblogService(
-            IBlogService blog,
+            BlogManager blog,
             IConfiguration config,
-            IHttpContextAccessor context,
-            IUserServices userServices)
+            IHttpContextAccessor context)
         {
             this.blog = blog;
             this.config = config;
-            this.userServices = userServices;
             this.context = context;
         }
 
         public Task<int> AddCategoryAsync(string key, string username, string password, NewCategory category)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             throw new NotImplementedException();
         }
 
         public Task<string> AddPageAsync(string blogid, string username, string password, Page page, bool publish)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             throw new NotImplementedException();
         }
 
         public async Task<string> AddPostAsync(string blogid, string username, string password, Post post, bool publish)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             if (post is null)
             {
@@ -80,14 +77,14 @@ namespace Miniblog.Core.Services
 
         public Task<bool> DeletePageAsync(string blogid, string username, string password, string pageid)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             throw new NotImplementedException();
         }
 
         public async Task<bool> DeletePostAsync(string key, string postid, string username, string password, bool publish)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             var post = await this.blog.GetPostById(postid).ConfigureAwait(false);
             if (post is null)
@@ -101,14 +98,14 @@ namespace Miniblog.Core.Services
 
         public Task<bool> EditPageAsync(string blogid, string pageid, string username, string password, Page page, bool publish)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             throw new NotImplementedException();
         }
 
         public async Task<bool> EditPostAsync(string postid, string username, string password, Post post, bool publish)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             var existing = await this.blog.GetPostById(postid).ConfigureAwait(false);
 
@@ -142,7 +139,7 @@ namespace Miniblog.Core.Services
 
         public async Task<CategoryInfo[]> GetCategoriesAsync(string blogid, string username, string password)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             return await this.blog.GetCategories()
                 .Select(
@@ -163,7 +160,7 @@ namespace Miniblog.Core.Services
 
         public async Task<Post?> GetPostAsync(string postid, string username, string password)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             var post = await this.blog.GetPostById(postid).ConfigureAwait(false);
 
@@ -172,7 +169,7 @@ namespace Miniblog.Core.Services
 
         public async Task<Post[]> GetRecentPostsAsync(string blogid, string username, string password, int numberOfPosts)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             return await this.blog.GetPosts(numberOfPosts)
                 .Select(this.ToMetaWebLogPost)
@@ -181,7 +178,7 @@ namespace Miniblog.Core.Services
 
         public async Task<Tag[]> GetTagsAsync(string blogid, string username, string password)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             return await this.blog.GetTags()
                 .Select(
@@ -195,14 +192,14 @@ namespace Miniblog.Core.Services
 
         public Task<UserInfo> GetUserInfoAsync(string key, string username, string password)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             throw new NotImplementedException();
         }
 
         public Task<BlogInfo[]> GetUsersBlogsAsync(string key, string username, string password)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             var request = this.context.HttpContext!.Request;
             var url = $"{request.Scheme}://{request.Host}";
@@ -221,7 +218,7 @@ namespace Miniblog.Core.Services
 
         public async Task<MediaObjectInfo> NewMediaObjectAsync(string blogid, string username, string password, MediaObject mediaObject)
         {
-            this.ValidateUser(username, password);
+            this.ValidateCredentials(username, password);
 
             if (mediaObject is null)
             {
@@ -253,9 +250,9 @@ namespace Miniblog.Core.Services
             };
         }
 
-        private void ValidateUser(string username, string password)
+        private void ValidateCredentials(string username, string password)
         {
-            if (this.userServices.ValidateUser(username, password) == false)
+            if (this.ValidateUser(username, password) == false)
             {
                 throw new MetaWeblogException(Properties.Resources.Unauthorized);
             }
@@ -264,6 +261,24 @@ namespace Miniblog.Core.Services
             identity.AddClaim(new Claim(ClaimTypes.Name, username));
 
             this.context.HttpContext!.User = new ClaimsPrincipal(identity);
+        }
+
+        private bool ValidateUser(string username, string password) =>
+            username == this.config[Constants.Config.User.UserName] && this.VerifyHashedPassword(password);
+
+        private bool VerifyHashedPassword(string password)
+        {
+            var saltBytes = Encoding.UTF8.GetBytes(this.config[Constants.Config.User.Salt]!);
+
+            var hashBytes = KeyDerivation.Pbkdf2(
+                password: password,
+                salt: saltBytes,
+                prf: KeyDerivationPrf.HMACSHA1,
+                iterationCount: 1000,
+                numBytesRequested: 256 / 8);
+
+            var hashText = BitConverter.ToString(hashBytes).Replace(Constants.Dash, string.Empty, StringComparison.OrdinalIgnoreCase);
+            return hashText == this.config[Constants.Config.User.Password];
         }
     }
 }

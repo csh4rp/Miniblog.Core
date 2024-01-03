@@ -18,13 +18,13 @@ namespace Miniblog.Core.Controllers
 
     public class BlogController : Controller
     {
-        private readonly IBlogService blog;
+        private readonly BlogManager blog;
 
         private readonly WebManifest manifest;
 
         private readonly IOptionsSnapshot<BlogSettings> settings;
 
-        public BlogController(IBlogService blog, IOptionsSnapshot<BlogSettings> settings, WebManifest manifest)
+        public BlogController(BlogManager blog, IOptionsSnapshot<BlogSettings> settings, WebManifest manifest)
         {
             this.blog = blog;
             this.settings = settings;
