@@ -5,22 +5,22 @@
     switch (statusCode)
     {
         case 400:
-            statusmessage = Miniblog.Core.Properties.Resources.BadRequestTheRequestCannotBeFulfilledDueToBadSyntax;
+            statusmessage = Miniblog.Web.Properties.Resources.BadRequestTheRequestCannotBeFulfilledDueToBadSyntax;
             break;
         case 403:
-            statusmessage = Miniblog.Core.Properties.Resources.Forbidden;
+            statusmessage = Miniblog.Web.Properties.Resources.Forbidden;
             break;
         case 404:
-            statusmessage = Miniblog.Core.Properties.Resources.PageNotFound;
+            statusmessage = Miniblog.Web.Properties.Resources.PageNotFound;
             break;
         case 408:
-            statusmessage = Miniblog.Core.Properties.Resources.TheServerTimedOutWaitingForTheRequest;
+            statusmessage = Miniblog.Web.Properties.Resources.TheServerTimedOutWaitingForTheRequest;
             break;
         case 500:
-            statusmessage = Miniblog.Core.Properties.Resources.InternalServerErrorServerWasUnableToFinishProcessingTheRequest;
+            statusmessage = Miniblog.Web.Properties.Resources.InternalServerErrorServerWasUnableToFinishProcessingTheRequest;
             break;
         default:
-            statusmessage = Miniblog.Core.Properties.Resources.ThatsOddSomethingWeDidntExpectHappened;
+            statusmessage = Miniblog.Web.Properties.Resources.ThatsOddSomethingWeDidntExpectHappened;
             break;
     }
 
@@ -28,6 +28,6 @@
 }
 
 <div class="container">
-    <h1>@Miniblog.Core.Properties.Resources.Error @Model</h1>
+    <h1>@Miniblog.Web.Properties.Resources.Error @Model</h1>
     <p>@statusmessage</p>
 </div>

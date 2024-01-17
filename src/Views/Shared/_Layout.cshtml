@@ -50,7 +50,7 @@
 
     <main itemprop="mainEntity" itemscope itemtype="http://schema.org/Blog" role="main">
         <noscript>
-            <p class="container">@Miniblog.Core.Properties.Resources.SomeFeaturesOfThisWebsiteDoNotWorkAsExpectedWhenJavaScriptIsDisabled</p>
+            <p class="container">@Miniblog.Web.Properties.Resources.SomeFeaturesOfThisWebsiteDoNotWorkAsExpectedWhenJavaScriptIsDisabled</p>
         </noscript>
         @RenderBody()
     </main>
@@ -64,18 +64,18 @@
 
                         if (User.Identity!.IsAuthenticated)
                         {
-                            <li><a asp-controller="Blog" asp-action="Edit" asp-route-id="">@Miniblog.Core.Properties.Resources.NewPost</a></li>
-                            <li><a href="~/logout/" title="@Miniblog.Core.Properties.Resources.SignOutAsAdministrator">@Miniblog.Core.Properties.Resources.SignOut</a></li>
+                            <li><a asp-controller="Blog" asp-action="Edit" asp-route-id="">@Miniblog.Web.Properties.Resources.NewPost</a></li>
+                            <li><a href="~/logout/" title="@Miniblog.Web.Properties.Resources.SignOutAsAdministrator">@Miniblog.Web.Properties.Resources.SignOut</a></li>
                         }
                         else
                         {
-                            <li><a href="~/login/?returnUrl=@path" rel="nofollow" title="@Miniblog.Core.Properties.Resources.SignInAsAdministrator">@Miniblog.Core.Properties.Resources.SignIn</a></li>
+                            <li><a href="~/login/?returnUrl=@path" rel="nofollow" title="@Miniblog.Web.Properties.Resources.SignInAsAdministrator">@Miniblog.Web.Properties.Resources.SignIn</a></li>
                         }
                     }
                 </ul>
             </nav>
             <p>
-                @Miniblog.Core.Properties.Resources.PoweredBy <a href="https://github.com/madskristensen/Miniblog.Core" rel="noopener noreferrer" target="_blank">@Miniblog.Core.Properties.Resources.MiniblogCore</a>
+                @Miniblog.Web.Properties.Resources.PoweredBy <a href="https://github.com/madskristensen/Miniblog.Web" rel="noopener noreferrer" target="_blank">@Miniblog.Web.Properties.Resources.MiniblogCore</a>
             </p>
         </div>
     </footer>
