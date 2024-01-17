@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<post>
+  <title>test</title>
+  <slug>test</slug>
+  <pubDate>2024-01-17T06:48:52.844Z</pubDate>
+  <lastModified>2024-01-17T06:49:13.456Z</lastModified>
+  <excerpt>test</excerpt>
+  <content>&lt;p&gt;test&lt;/p&gt;</content>
+  <ispublished>true</ispublished>
+  <categories>
+    <category>test</category>
+  </categories>
+  <tags>
+    <tag>test</tag>
+  </tags>
+  <comments>
+    <comment isAdmin="true" id="8f6f994d-4dfd-48cc-9170-2ea04eb2fa4a">
+      <author>name</author>
+      <email>mail@mail.com</email>
+      <date>2024-01-17T06:49:13.439Z</date>
+      <content>awesom!</content>
+    </comment>
+  </comments>
+</post>
