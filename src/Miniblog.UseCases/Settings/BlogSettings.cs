@@ -1,4 +1,4 @@
-namespace Miniblog.Web;
+namespace Miniblog.UseCases.Settings;
 
 public class BlogSettings
 {

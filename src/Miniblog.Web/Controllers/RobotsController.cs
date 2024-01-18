@@ -16,6 +16,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
+using UseCases.Settings;
+
 using WebEssentials.AspNetCore.Pwa;
 
 public class RobotsController : Controller

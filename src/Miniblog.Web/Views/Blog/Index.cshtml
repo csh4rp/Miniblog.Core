@@ -1,4 +1,5 @@
-@model IAsyncEnumerable<Post>
+@using Miniblog.UseCases.Settings
+@model List<Miniblog.UseCases.Models.PostDto>
 @inject IOptionsSnapshot<BlogSettings> settings
 @{
     int currentPage = int.Parse(ViewContext.RouteData.Values[Constants.page] as string ?? "0");
@@ -9,13 +10,13 @@
     int totalPages = (totalPosts / this.settings.Value.PostsPerPage) - (totalPosts % this.settings.Value.PostsPerPage == 0 ? 1 : 0);
 }
 
-@await foreach (var post in Model)
+@foreach (var post in Model)
 {
     await Html.RenderPartialAsync("Post.cshtml", post);
 }
 
 <nav class="pagination container" aria-label="Pagination">
-    @if ((await Model.AnyAsync()) && currentPage < totalPages)
+    @if ((Model.Any()) && currentPage < totalPages)
     {
         <a rel="prev" href="@ViewData[Constants.prev]" title="Older posts">&laquo; Older</a>
     }
@@ -26,7 +27,7 @@
     <br /><br />
 
     @section Head {
-        @if ((await Model.AnyAsync()) && currentPage < totalPages)
+        @if (Model.Any() && currentPage < totalPages)
         {
             <link rel="prev" href="@ViewData[Constants.prev]" />
         }

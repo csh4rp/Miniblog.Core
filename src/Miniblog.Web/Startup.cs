@@ -1,5 +1,7 @@
 namespace Miniblog.Web;
 
+using Infrastructure;
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +22,9 @@ using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
 using JavaScriptEngineSwitcher.V8;
 
 using Services;
+
+using UseCases;
+using UseCases.Settings;
 
 using IWmmLogger = WebMarkupMin.Core.Loggers.ILogger;
 using MetaWeblogService = Services.MetaWeblogService;
@@ -160,5 +165,14 @@ public class Startup
                 pipeline.CompileScssFiles()
                     .InlineImages(1);
             });
+
+        services.AddDataAccess();
+
+        services.AddStorage(c =>
+        {
+            c.RootPath = ".\\";
+        });
+
+        services.AddUseCases();
     }
 }
