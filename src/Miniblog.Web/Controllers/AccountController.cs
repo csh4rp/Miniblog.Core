@@ -18,12 +18,9 @@ using System.Threading.Tasks;
 [Authorize]
 public class AccountController : Controller
 {
-    private readonly IConfiguration config;
+    private readonly IConfiguration _config;
 
-    public AccountController(IConfiguration config)
-    {
-        this.config = config;
-    }
+    public AccountController(IConfiguration config) => _config = config;
 
     [Route("/login")]
     [AllowAnonymous]
@@ -42,7 +39,7 @@ public class AccountController : Controller
     {
         this.ViewData[Constants.ReturnUrl] = returnUrl;
 
-        if (model is null || model.UserName is null || model.Password is null)
+        if (model is null || string.IsNullOrEmpty(model.UserName) || string.IsNullOrEmpty(model.Password))
         {
             this.ModelState.AddModelError(string.Empty, Properties.Resources.UsernameOrPasswordIsInvalid);
             return this.View(nameof(Login), model);
@@ -72,7 +69,7 @@ public class AccountController : Controller
     }
 
     public bool ValidateUser(string username, string password) =>
-        username == this.config[Constants.Config.User.UserName] && this.VerifyHashedPassword(password, this.config);
+        username == this._config[Constants.Config.User.UserName] && this.VerifyHashedPassword(password, this._config);
 
     private bool VerifyHashedPassword(string password, IConfiguration config)
     {

@@ -1,10 +1,10 @@
 @using Miniblog.UseCases.Settings
-@model Miniblog.UseCases.Models.PostDto
+@model Miniblog.UseCases.Dtos.PostDto
 @inject IOptionsSnapshot<BlogSettings> settings
 @{
 	ViewData[Constants.Title] = Model.Title;
 	ViewData[Constants.Description] = Model.Excerpt;
-	bool showFullPost = ViewContext.RouteData.Values.ContainsKey(Constants.slug);
+	bool showFullPost = ViewContext.RouteData.Values.ContainsKey(Constants.Slug);
 	string host = $"{Context.Request.Scheme}://{Context.Request.Host}";
 	bool isCodePreview = Model.Content.Contains("</code>");
 }

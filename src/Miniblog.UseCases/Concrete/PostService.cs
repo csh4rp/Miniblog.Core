@@ -1,14 +1,10 @@
+using Miniblog.Domain;
+using Miniblog.UseCases.Dtos;
+
 namespace Miniblog.UseCases.Concrete;
 
 using Abstract;
-
-using Domain.Abstract;
-using Domain.Models;
-
 using Microsoft.Extensions.Options;
-
-using Models;
-
 using Settings;
 
 using System.Text.RegularExpressions;
@@ -31,34 +27,21 @@ public class PostService : IPostService
         ICategoryRepository categoryRepository,
         IOptions<BlogSettings> options)
     {
-        IOptions<BlogSettings> options1;
-        this._postRepository = postRepository;
-        this._timeProvider = timeProvider;
-        this._storageService = storageService;
-        this._tagRepository = tagRepository;
-        this._categoryRepository = categoryRepository;
+        _postRepository = postRepository;
+        _timeProvider = timeProvider;
+        _storageService = storageService;
+        _tagRepository = tagRepository;
+        _categoryRepository = categoryRepository;
 
-        this._pageSize = options.Value.PostsPerPage;
+        _pageSize = options.Value.PostsPerPage;
     }
 
     public async Task SaveAsync(PostDto postDto, CancellationToken cancellationToken)
     {
         Post post;
 
-        if (!string.IsNullOrEmpty(postDto.Id))
-        {
-            post = await this._postRepository.FindByIdAsync(postDto.Id, cancellationToken)
-                   ?? throw new InvalidOperationException("Post does not exist");
-        }
-        else
-        {
-            post = new Post();
-        }
-
-        post = this.Map(post, postDto);
-
-        var allTags = await this._tagRepository.GetAllAsync(cancellationToken);
-        var allCategories = await this._categoryRepository.GetAllAsync(cancellationToken);
+        var allTags = await _tagRepository.GetAllAsync(cancellationToken);
+        var allCategories = await _categoryRepository.GetAllAsync(cancellationToken);
 
         foreach (var tag in postDto.Tags)
         {
@@ -66,15 +49,42 @@ public class PostService : IPostService
             if (existingTag is null)
             {
                 existingTag = new Tag { Name = tag };
-                await this._tagRepository.SaveAsync(existingTag, cancellationToken);
+                await _tagRepository.SaveAsync(existingTag, cancellationToken);
+                allTags.Add(existingTag);
             }
+        }
 
+        foreach (var category in postDto.Categories)
+        {
+            var existingCategory = allCategories.FirstOrDefault(t => t.Name == category);
+            if (existingCategory is null)
+            {
+                existingCategory = new Category { Name = category };
+                await _categoryRepository.SaveAsync(existingCategory, cancellationToken);
+                allCategories.Add(existingCategory);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(postDto.Id))
+        {
+            post = await _postRepository.FindByIdAsync(postDto.Id, cancellationToken)
+                   ?? throw new InvalidOperationException("Post does not exist");
+        }
+        else
+        {
+            post = new Post();
+        }
+
+        post = Map(post, postDto);
+
+        foreach (var tag in postDto.Tags)
+        {
+            var existingTag = allTags.Single(t => t.Name == tag);
             if (post.Tags.All(t => t.Name != tag))
             {
                 post.Tags.Add(existingTag);
             }
         }
-
 
         var tagsToRemove = new List<Tag>();
         foreach (var tag in post.Tags)
@@ -89,19 +99,12 @@ public class PostService : IPostService
 
         foreach (var category in postDto.Categories)
         {
-            var existingCategory = allCategories.FirstOrDefault(t => t.Name == category);
-            if (existingCategory is null)
-            {
-                existingCategory = new Category { Name = category };
-                await this._categoryRepository.SaveAsync(existingCategory, cancellationToken);
-            }
-
+            var existingCategory = allCategories.Single(t => t.Name == category);
             if (post.Categories.All(t => t.Name != category))
             {
                 post.Categories.Add(existingCategory);
             }
         }
-
 
         var categoriesToRemove = new List<Category>();
         foreach (var category in post.Categories)
@@ -114,26 +117,26 @@ public class PostService : IPostService
 
         categoriesToRemove.ForEach(c => post.Categories.Remove(c));
 
-        await this.SaveFilesToDiskAsync(post, cancellationToken);
+        await SaveFilesToDiskAsync(post, cancellationToken);
 
-        await this._postRepository.SaveAsync(post, cancellationToken);
+        await _postRepository.SaveAsync(post, cancellationToken);
     }
 
     public async Task DeleteAsync(string postId, CancellationToken cancellationToken)
     {
-        var post = await this._postRepository.FindByIdAsync(postId, cancellationToken)
+        var post = await _postRepository.FindByIdAsync(postId, cancellationToken)
                    ?? throw new InvalidOperationException("Post does not exist");
 
-        await this._postRepository.DeleteAsync(post, cancellationToken);
+        await _postRepository.DeleteAsync(post, cancellationToken);
     }
 
-    public async Task<ResultPage<PostDto>> GetAllAsync(int page, CancellationToken cancellationToken)
+    public async Task<ResultPage<PostDto>> GetAllAsync(int page, int? pageSize, CancellationToken cancellationToken)
     {
-        var skip = page * this._pageSize;
-        var take = this._pageSize;
+        var take = pageSize ?? _pageSize;
+        var skip = page * take;
 
-        var posts = await this._postRepository.FindAllAsync(skip, take, cancellationToken);
-        var count = await this._postRepository.CountAllAsync(cancellationToken);
+        var posts = await _postRepository.FindAllAsync(skip, take, cancellationToken);
+        var count = await _postRepository.CountAllAsync(cancellationToken);
 
         var items =  posts.Select(Map).ToList();
 
@@ -142,7 +145,7 @@ public class PostService : IPostService
 
     public async Task<PostDto?> FindByIdAsync(string postId, CancellationToken cancellationToken)
     {
-        var post = await this._postRepository.FindByIdAsync(postId, cancellationToken);
+        var post = await _postRepository.FindByIdAsync(postId, cancellationToken);
 
         return post is null ? null : Map(post);
     }
@@ -169,7 +172,7 @@ public class PostService : IPostService
         post.Excerpt = postDto.Excerpt;
         post.Content = postDto.Content;
         post.IsPublished = postDto.IsPublished;
-        post.LastModified = this._timeProvider.GetUtcNow().UtcDateTime;
+        post.LastModified = _timeProvider.GetUtcNow().UtcDateTime;
 
         return post;
     }
@@ -186,7 +189,7 @@ public class PostService : IPostService
 
     public async Task<PostDto?> FindBySlugAsync(string slug, CancellationToken cancellationToken)
     {
-        var post = await this._postRepository.FindBySlugAsync(slug, cancellationToken);
+        var post = await _postRepository.FindBySlugAsync(slug, cancellationToken);
 
         return post is null ? null : Map(post);
     }
@@ -195,14 +198,14 @@ public class PostService : IPostService
         string category,
         CancellationToken cancellationToken)
     {
-        var skip = page * this._pageSize;
-        var take = this._pageSize;
+        var skip = page * _pageSize;
+        var take = _pageSize;
 
         var posts =
-            await this._postRepository.FindAllByCategoryAsync(skip, take, category,
+            await _postRepository.FindAllByCategoryAsync(skip, take, category,
                 cancellationToken);
 
-        var count = await this._postRepository.CountByCategoryAsync(category, cancellationToken);
+        var count = await _postRepository.CountByCategoryAsync(category, cancellationToken);
 
         var items =  posts.Select(Map).ToList();
 
@@ -213,13 +216,13 @@ public class PostService : IPostService
         string tag,
         CancellationToken cancellationToken)
     {
-        var skip = page * this._pageSize;
-        var take = this._pageSize;
+        var skip = page * _pageSize;
+        var take = _pageSize;
 
         var posts =
-            await this._postRepository.FindAllByTagAsync(skip, take, tag, cancellationToken);
+            await _postRepository.FindAllByTagAsync(skip, take, tag, cancellationToken);
 
-        var count = await this._postRepository.CountByTagAsync(tag, cancellationToken);
+        var count = await _postRepository.CountByTagAsync(tag, cancellationToken);
 
         var items =  posts.Select(Map).ToList();
 
@@ -230,20 +233,20 @@ public class PostService : IPostService
         CommentDto commentDto,
         CancellationToken cancellationToken)
     {
-        var post = await this._postRepository.FindByIdAsync(postId, cancellationToken)
+        var post = await _postRepository.FindByIdAsync(postId, cancellationToken)
                    ?? throw new InvalidOperationException("Post was not found");
 
         var comment = new Comment
         {
             Content = commentDto.Content,
-            PubDate = this._timeProvider.GetUtcNow().UtcDateTime,
+            PubDate = _timeProvider.GetUtcNow().UtcDateTime,
             Author = commentDto.Author,
             Email = commentDto.Email
         };
 
         post.Comments.Add(comment);
 
-        await this._postRepository.SaveAsync(post, cancellationToken);
+        await _postRepository.SaveAsync(post, cancellationToken);
 
         return comment.Id;
     }
@@ -252,7 +255,7 @@ public class PostService : IPostService
         string commentId,
         CancellationToken cancellationToken)
     {
-        var post = await this._postRepository.FindByIdAsync(postId, cancellationToken)
+        var post = await _postRepository.FindByIdAsync(postId, cancellationToken)
                    ?? throw new InvalidOperationException("Post was not found");
 
         var comment = post.Comments.FirstOrDefault(c => c.Id == commentId);
@@ -261,7 +264,7 @@ public class PostService : IPostService
             post.Comments.Remove(comment);
         }
 
-        await this._postRepository.SaveAsync(post, cancellationToken);
+        await _postRepository.SaveAsync(post, cancellationToken);
     }
 
     private async Task SaveFilesToDiskAsync(Post post, CancellationToken cancellationToken)
@@ -305,7 +308,7 @@ public class PostService : IPostService
             {
                 var bytes = Convert.FromBase64String(base64Match.Groups["base64"].Value);
                 srcNode.Value =
-                    await this._storageService.SaveFileAsync(bytes, fileNameNode.Value,
+                    await _storageService.SaveFileAsync(bytes, fileNameNode.Value,
                         cancellationToken);
 
                 img.Attributes.Remove(fileNameNode);

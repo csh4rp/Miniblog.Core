@@ -4,24 +4,24 @@ using System.Diagnostics.CodeAnalysis;
 
 public static class Constants
 {
-    public static readonly string AllCats = "AllCats";
-    public static readonly string AllTags = "AllTags";
-    public static readonly string categories = "categories";
-    public static readonly string tags = "tags";
-    public static readonly string Dash = "-";
-    public static readonly string Description = "Description";
-    public static readonly string Head = "Head";
-    public static readonly string next = "next";
-    public static readonly string page = "page";
-    public static readonly string Preload = "Preload";
-    public static readonly string prev = "prev";
-    public static readonly string ReturnUrl = "ReturnUrl";
-    public static readonly string Scripts = "Scripts";
-    public static readonly string slug = "slug";
-    public static readonly string Space = " ";
-    public static readonly string Title = "Title";
-    public static readonly string TotalPostCount = "TotalPostCount";
-    public static readonly string ViewOption = "ViewOption";
+    public const string AllCats = "AllCats";
+    public const string AllTags = "AllTags";
+    public const string Categories = "categories";
+    public const string Tags = "tags";
+    public const string Dash = "-";
+    public const string Description = "Description";
+    public const string Head = "Head";
+    public const string Next = "next";
+    public const string Page = "page";
+    public const string Preload = "Preload";
+    public const string Prev = "prev";
+    public const string ReturnUrl = "ReturnUrl";
+    public const string Scripts = "Scripts";
+    public const string Slug = "slug";
+    public const string Space = " ";
+    public const string Title = "Title";
+    public const string TotalPostCount = "TotalPostCount";
+    public const string ViewOption = "ViewOption";
 
     [SuppressMessage(
         "Design",
@@ -31,14 +31,14 @@ public static class Constants
     {
         public static class Blog
         {
-            public static readonly string Name = "blog:name";
+            public const string Name = "blog:name";
         }
 
         public static class User
         {
-            public static readonly string Password = "user:password";
-            public static readonly string Salt = "user:salt";
-            public static readonly string UserName = "user:username";
+            public const string Password = "user:password";
+            public const string Salt = "user:salt";
+            public const string UserName = "user:username";
         }
     }
 }

@@ -1,3 +1,5 @@
+using Miniblog.Infrastructure.DataAccess;
+
 namespace Miniblog.Web;
 
 using Infrastructure;
@@ -20,9 +22,6 @@ using WebMarkupMin.Core;
 using WilderMinds.MetaWeblog;
 using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
 using JavaScriptEngineSwitcher.V8;
-
-using Services;
-
 using UseCases;
 using UseCases.Settings;
 
@@ -32,7 +31,7 @@ using WmmNullLogger = WebMarkupMin.Core.Loggers.NullLogger;
 
 public class Startup
 {
-    public Startup(IConfiguration configuration) => this.Configuration = configuration;
+    public Startup(IConfiguration configuration) => Configuration = configuration;
 
     public IConfiguration Configuration { get; }
 
@@ -98,6 +97,13 @@ public class Startup
             {
                 endpoints.MapControllerRoute("default", "{controller=Blog}/{action=Index}/{id?}");
             });
+
+        using (var scope = app.ApplicationServices.CreateScope())
+        using (var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>())
+        {
+            db.Database.EnsureCreated();
+        }
+
     }
 
     /// <remarks>This method gets called by the runtime. Use this method to add services to the container.</remarks>
@@ -106,7 +112,6 @@ public class Startup
         services.AddControllersWithViews();
         services.AddRazorPages();
 
-        services.AddSingleton<BlogManager>();
         services.Configure<BlogSettings>(this.Configuration.GetSection("blog"));
         services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddMetaWeblog<MetaWeblogService>();

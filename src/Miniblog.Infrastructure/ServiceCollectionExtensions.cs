@@ -2,9 +2,6 @@ namespace Miniblog.Infrastructure;
 
 using DataAccess;
 using DataAccess.Repositories;
-
-using Domain.Abstract;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

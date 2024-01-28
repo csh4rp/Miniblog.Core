@@ -1,3 +1,3 @@
-namespace Miniblog.UseCases.Models;
+namespace Miniblog.UseCases.Dtos;
 
 public record ResultPage<T>(List<T> Items, int Total);

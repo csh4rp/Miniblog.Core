@@ -1,8 +1,8 @@
 @using Miniblog.UseCases.Settings
-@model List<Miniblog.UseCases.Models.PostDto>
+@model List<Miniblog.UseCases.Dtos.PostDto>
 @inject IOptionsSnapshot<BlogSettings> settings
 @{
-    int currentPage = int.Parse(ViewContext.RouteData.Values[Constants.page] as string ?? "0");
+    int currentPage = int.Parse(ViewContext.RouteData.Values[Constants.Page] as string ?? "0");
 
     int totalPosts;
     totalPosts = int.TryParse(ViewData[Constants.TotalPostCount]!.ToString(), out totalPosts) ? totalPosts : 0;
@@ -18,22 +18,22 @@
 <nav class="pagination container" aria-label="Pagination">
     @if ((Model.Any()) && currentPage < totalPages)
     {
-        <a rel="prev" href="@ViewData[Constants.prev]" title="Older posts">&laquo; Older</a>
+        <a rel="prev" href="@ViewData[Constants.Prev]" title="Older posts">&laquo; Older</a>
     }
     @if (currentPage > 0)
     {
-        <a rel="next" href="@ViewData[Constants.next]" title="Newer posts">Newer &raquo;</a>
+        <a rel="next" href="@ViewData[Constants.Next]" title="Newer posts">Newer &raquo;</a>
     }
     <br /><br />
 
     @section Head {
         @if (Model.Any() && currentPage < totalPages)
         {
-            <link rel="prev" href="@ViewData[Constants.prev]" />
+            <link rel="prev" href="@ViewData[Constants.Prev]" />
         }
         @if (currentPage > 0)
         {
-            <link rel="next" href="@ViewData[Constants.next]" />
+            <link rel="next" href="@ViewData[Constants.Next]" />
         }
     }
 </nav>

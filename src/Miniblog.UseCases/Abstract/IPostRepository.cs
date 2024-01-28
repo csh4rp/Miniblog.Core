@@ -1,6 +1,6 @@
-namespace Miniblog.Domain.Abstract;
+using Miniblog.Domain;
 
-using Models;
+namespace Miniblog.UseCases.Abstract;
 
 public interface IPostRepository
 {

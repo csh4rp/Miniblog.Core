@@ -1,6 +1,6 @@
-namespace Miniblog.Infrastructure.DataAccess;
+using Miniblog.Domain;
 
-using Domain.Models;
+namespace Miniblog.Infrastructure.DataAccess;
 
 using Microsoft.EntityFrameworkCore;
 

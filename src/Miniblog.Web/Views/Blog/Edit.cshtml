@@ -1,4 +1,4 @@
-@model Miniblog.UseCases.Models.PostDto
+@model Miniblog.UseCases.Dtos.PostDto
 @{
     var isNew = string.IsNullOrEmpty(Model.Title);
     ViewData[Constants.Title] = "Edit " + (Model.Title ?? "new post");

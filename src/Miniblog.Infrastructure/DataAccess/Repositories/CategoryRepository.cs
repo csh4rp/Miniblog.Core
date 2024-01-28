@@ -1,11 +1,11 @@
-namespace Miniblog.Infrastructure.DataAccess.Repositories;
+using Miniblog.Domain;
+using Miniblog.UseCases.Abstract;
 
-using Domain.Abstract;
-using Domain.Models;
+namespace Miniblog.Infrastructure.DataAccess.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 
-public class CategoryRepository : ICategoryRepository
+internal sealed class CategoryRepository : ICategoryRepository
 {
     private readonly BlogDbContext _blogDbContext;
 

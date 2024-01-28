@@ -1,8 +1,11 @@
-namespace Miniblog.UseCases.Models;
-
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.VisualBasic;
+
+namespace Miniblog.UseCases.Dtos;
 
 public class PostDto
 {
@@ -55,6 +58,46 @@ public class PostDto
         }
 
         return result;
+    }
+
+    [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "The slug should be lower case.")]
+    public static string CreateSlug(string title)
+    {
+        title = title?.ToLowerInvariant().Replace(
+            " ", "-", StringComparison.OrdinalIgnoreCase) ?? string.Empty;
+        title = RemoveDiacritics(title);
+        title = RemoveReservedUrlCharacters(title);
+
+        return title.ToLowerInvariant();
+    }
+
+    private static string RemoveDiacritics(string text)
+    {
+        var normalizedString = text.Normalize(NormalizationForm.FormD);
+        var stringBuilder = new StringBuilder();
+
+        foreach (var c in normalizedString)
+        {
+            var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+            if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+            {
+                stringBuilder.Append(c);
+            }
+        }
+
+        return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+    }
+
+    private static string RemoveReservedUrlCharacters(string text)
+    {
+        var reservedCharacters = new List<string> { "!", "#", "$", "&", "'", "(", ")", "*", ",", "/", ":", ";", "=", "?", "@", "[", "]", "\"", "%", ".", "<", ">", "\\", "^", "_", "'", "{", "}", "|", "~", "`", "+" };
+
+        foreach (var chr in reservedCharacters)
+        {
+            text = text.Replace(chr, string.Empty, StringComparison.OrdinalIgnoreCase);
+        }
+
+        return text;
     }
 
     public bool AreCommentsOpen(int commentsCloseAfterDays) =>

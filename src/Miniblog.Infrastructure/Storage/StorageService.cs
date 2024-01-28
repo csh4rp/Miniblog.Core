@@ -9,13 +9,11 @@ using UseCases.Abstract;
 
 public class StorageService : IStorageService
 {
-    private const string FILES = "files";
+    private const string Files = "files";
+    private const string Posts = "Posts";
+    private readonly string _folder;
 
-    private const string POSTS = "Posts";
-
-    private readonly string folder;
-
-    public StorageService(IOptions<StorageOptions> options) => this.folder = Path.Combine(options.Value.RootPath, POSTS);
+    public StorageService(IOptions<StorageOptions> options) => _folder = Path.Combine(options.Value.RootPath, Posts);
 
     public async Task<string> SaveFileAsync(byte[] bytes,
         string fileName,
@@ -28,7 +26,7 @@ public class StorageService : IStorageService
 
         var fileNameWithSuffix = $"{name}_{suffix}{ext}";
 
-        var absolute = Path.Combine(this.folder, FILES, fileNameWithSuffix);
+        var absolute = Path.Combine(_folder, Files, fileNameWithSuffix);
         var dir = Path.GetDirectoryName(absolute)!;
 
         Directory.CreateDirectory(dir);
@@ -37,7 +35,7 @@ public class StorageService : IStorageService
             await writer.WriteAsync(bytes, cancellationToken).ConfigureAwait(false);
         }
 
-        return $"/{POSTS}/{FILES}/{fileNameWithSuffix}";
+        return $"/{Posts}/{Files}/{fileNameWithSuffix}";
     }
 
     private static string CleanFromInvalidChars(string input)

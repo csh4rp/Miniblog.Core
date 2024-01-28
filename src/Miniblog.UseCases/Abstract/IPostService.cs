@@ -1,6 +1,6 @@
-namespace Miniblog.UseCases.Abstract;
+using Miniblog.UseCases.Dtos;
 
-using Models;
+namespace Miniblog.UseCases.Abstract;
 
 public interface IPostService
 {
@@ -8,7 +8,7 @@ public interface IPostService
 
     Task DeleteAsync(string postId, CancellationToken cancellationToken);
 
-    Task<ResultPage<PostDto>> GetAllAsync(int page, CancellationToken cancellationToken);
+    Task<ResultPage<PostDto>> GetAllAsync(int page, int? pageSize, CancellationToken cancellationToken);
 
     Task<PostDto?> FindByIdAsync(string postId, CancellationToken cancellationToken);
 

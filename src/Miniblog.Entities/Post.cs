@@ -1,6 +1,6 @@
-namespace Miniblog.Domain.Models;
-
 using System.Globalization;
+
+namespace Miniblog.Domain;
 
 public class Post
 {

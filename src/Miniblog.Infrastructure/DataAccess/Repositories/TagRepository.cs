@@ -1,7 +1,7 @@
-namespace Miniblog.Infrastructure.DataAccess.Repositories;
+using Miniblog.Domain;
+using Miniblog.UseCases.Abstract;
 
-using Domain.Abstract;
-using Domain.Models;
+namespace Miniblog.Infrastructure.DataAccess.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -9,23 +9,20 @@ public class TagRepository : ITagRepository
 {
     private readonly BlogDbContext _blogDbContext;
 
-    public TagRepository(BlogDbContext blogDbContext)
-    {
-        this._blogDbContext = blogDbContext;
-    }
+    public TagRepository(BlogDbContext blogDbContext) => _blogDbContext = blogDbContext;
 
     public Task SaveAsync(Tag tag, CancellationToken cancellationToken)
     {
-        var entityEntry = this._blogDbContext.Entry(tag);
+        var entityEntry = _blogDbContext.Entry(tag);
 
         if (entityEntry.State == EntityState.Detached)
         {
-            this._blogDbContext.Tags.Add(tag);
+            _blogDbContext.Tags.Add(tag);
         }
 
-        return this._blogDbContext.SaveChangesAsync(cancellationToken);
+        return _blogDbContext.SaveChangesAsync(cancellationToken);
     }
 
     public Task<List<Tag>> GetAllAsync(CancellationToken cancellationToken) =>
-        this._blogDbContext.Tags.ToListAsync(cancellationToken);
+        _blogDbContext.Tags.ToListAsync(cancellationToken);
 }

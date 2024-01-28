@@ -9,7 +9,7 @@ public class LoginViewModel
     public string Password { get; set; } = string.Empty;
 
     [Display(Name = "Remember me?")]
-    public bool RememberMe { get; set; } = false;
+    public bool RememberMe { get; set; }
 
     [Required]
     public string UserName { get; set; } = string.Empty;

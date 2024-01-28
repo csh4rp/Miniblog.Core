@@ -1,4 +1,4 @@
-namespace Miniblog.Domain.Models;
+namespace Miniblog.Domain;
 
 public class Tag
 {

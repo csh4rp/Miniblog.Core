@@ -1,4 +1,4 @@
-namespace Miniblog.Domain.Models;
+namespace Miniblog.Domain;
 
 public class Comment
 {
@@ -11,7 +11,7 @@ public class Comment
 
     public string Email { get; set; } = string.Empty;
 
-    public bool IsAdmin { get; set; } = false;
+    public bool IsAdmin { get; set; }
 
     public DateTime PubDate { get; set; } = DateTime.UtcNow;
 }
