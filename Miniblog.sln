@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miniblog.UseCases", "src\Mi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miniblog.Infrastructure", "src\Miniblog.Infrastructure\Miniblog.Infrastructure.csproj", "{A7D4AF2E-39B6-49EC-B28E-6D3FDC1C141E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{836FEDB8-96D4-45CE-A037-1B9BB1A52D32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miniblog.UseCases.UnitTests", "test\Miniblog.UseCases.UnitTests\Miniblog.UseCases.UnitTests.csproj", "{C5DAF055-F3C8-451C-B86A-6E6B0C156B2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +45,10 @@ Global
 		{A7D4AF2E-39B6-49EC-B28E-6D3FDC1C141E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7D4AF2E-39B6-49EC-B28E-6D3FDC1C141E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7D4AF2E-39B6-49EC-B28E-6D3FDC1C141E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5DAF055-F3C8-451C-B86A-6E6B0C156B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5DAF055-F3C8-451C-B86A-6E6B0C156B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5DAF055-F3C8-451C-B86A-6E6B0C156B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5DAF055-F3C8-451C-B86A-6E6B0C156B2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,5 +61,6 @@ Global
 		{6AFC6DAD-2E80-4241-B0CE-072468C9007C} = {93092D2F-AED0-41DF-B590-81FD74BDC3EE}
 		{4EE28877-DE1D-443E-8F21-AE5A5906A76C} = {93092D2F-AED0-41DF-B590-81FD74BDC3EE}
 		{A7D4AF2E-39B6-49EC-B28E-6D3FDC1C141E} = {93092D2F-AED0-41DF-B590-81FD74BDC3EE}
+		{C5DAF055-F3C8-451C-B86A-6E6B0C156B2C} = {836FEDB8-96D4-45CE-A037-1B9BB1A52D32}
 	EndGlobalSection
 EndGlobal

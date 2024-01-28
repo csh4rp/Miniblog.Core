@@ -21,18 +21,17 @@ public class PostService : IPostService
     private readonly ICategoryRepository _categoryRepository;
 
     public PostService(IPostRepository postRepository,
-        TimeProvider timeProvider,
-        IStorageService storageService,
         ITagRepository tagRepository,
         ICategoryRepository categoryRepository,
+        TimeProvider timeProvider,
+        IStorageService storageService,
         IOptions<BlogSettings> options)
     {
         _postRepository = postRepository;
-        _timeProvider = timeProvider;
-        _storageService = storageService;
         _tagRepository = tagRepository;
         _categoryRepository = categoryRepository;
-
+        _timeProvider = timeProvider;
+        _storageService = storageService;
         _pageSize = options.Value.PostsPerPage;
     }
 
